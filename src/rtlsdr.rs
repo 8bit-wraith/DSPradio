@@ -9,12 +9,12 @@ use futures::Stream;
 use num_complex::Complex;
 use rtl_sdr_rs::{DEFAULT_BUF_LENGTH, RtlSdr, TunerGain};
 
-use crate::{IqFormat, error};
+use crate::{Gain, IqFormat, error};
 
 /**
  * RTL-SDR Configuration
  */
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct RtlSdrConfig {
     /// Device index (0 for first device)
     pub device_index: usize,
@@ -22,18 +22,21 @@ pub struct RtlSdrConfig {
     pub center_freq: u32,
     /// Sample rate in Hz
     pub sample_rate: u32,
-    /// Tuner gain (None for AGC, Some(gain) for manual)
-    pub gain: Option<i32>,
+    /// Tuner gain (Auto or Manual in dB)
+    pub gain: Gain,
+    /// Enable bias tee (default: false)
+    pub bias_tee: bool,
 }
 
 impl RtlSdrConfig {
     /// Create a new RTL-SDR configuration with specified parameters
-    pub fn new(device_index: usize, center_freq: u32, sample_rate: u32, gain: Option<i32>) -> Self {
+    pub fn new(device_index: usize, center_freq: u32, sample_rate: u32, gain: Gain) -> Self {
         Self {
             device_index,
             center_freq,
             sample_rate,
             gain,
+            bias_tee: false,
         }
     }
 }
@@ -54,10 +57,14 @@ impl RtlSdrReader {
         rtlsdr.set_sample_rate(config.sample_rate)?;
         rtlsdr.set_center_freq(config.center_freq)?;
         match config.gain {
-            Some(gain) => rtlsdr.set_tuner_gain(TunerGain::Manual(gain))?,
-            None => rtlsdr.set_tuner_gain(TunerGain::Auto)?,
+            Gain::Manual(gain_db) => {
+                // Convert dB to rtl-sdr units (gain * 10)
+                let gain_tenths = (gain_db * 10.0) as i32;
+                rtlsdr.set_tuner_gain(TunerGain::Manual(gain_tenths))?
+            }
+            Gain::Auto => rtlsdr.set_tuner_gain(TunerGain::Auto)?,
         };
-        let _ = rtlsdr.set_bias_tee(false);
+        let _ = rtlsdr.set_bias_tee(config.bias_tee);
         rtlsdr.reset_buffer()?;
         Ok(Self {
             rtlsdr,
@@ -112,10 +119,14 @@ impl AsyncRtlSdrReader {
                 rtl.set_sample_rate(cfg.sample_rate)?;
                 rtl.set_center_freq(cfg.center_freq)?;
                 match cfg.gain {
-                    Some(gain) => rtl.set_tuner_gain(TunerGain::Manual(gain))?,
-                    None => rtl.set_tuner_gain(TunerGain::Auto)?,
+                    Gain::Manual(gain_db) => {
+                        // Convert dB to rtl-sdr units (gain * 10)
+                        let gain_tenths = (gain_db * 10.0) as i32;
+                        rtl.set_tuner_gain(TunerGain::Manual(gain_tenths))?
+                    }
+                    Gain::Auto => rtl.set_tuner_gain(TunerGain::Auto)?,
                 };
-                let _ = rtl.set_bias_tee(false);
+                let _ = rtl.set_bias_tee(cfg.bias_tee);
                 rtl.reset_buffer()?;
                 Ok(rtl)
             })();
@@ -177,4 +188,27 @@ impl Stream for AsyncRtlSdrReader {
             std::task::Poll::Pending => std::task::Poll::Pending,
         }
     }
+}
+
+/// Try to open the first available RTL-SDR device
+///
+/// This is a convenience function that attempts to open device index 0.
+/// Returns an error if no device is found.
+///
+/// # Examples
+///
+/// ```no_run
+/// use dsp_radio::rtlsdr::RtlSdrConfig;
+/// use dsp_radio::Gain;
+///
+/// let config = RtlSdrConfig {
+///     device_index: 0,  // First device
+///     center_freq: 1090000000,
+///     sample_rate: 2400000,
+///     gain: Gain::Auto,
+///     bias_tee: false,
+/// };
+/// ```
+pub fn get_first_device_index() -> usize {
+    0 // RTL-SDR convention: device 0 is the first available device
 }

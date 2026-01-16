@@ -1,5 +1,5 @@
 use clap::Parser;
-use desperado::{IqAsyncSource, IqFormat};
+use dsp_radio::{IqAsyncSource, IqFormat};
 use futures::StreamExt;
 
 #[derive(Parser, Debug)]
@@ -23,7 +23,7 @@ struct Args {
 }
 
 #[tokio::main]
-async fn main() -> desperado::Result<()> {
+async fn main() -> dsp_radio::Result<()> {
     let args = Args::parse();
     let mut iq_file = IqAsyncSource::from_file(
         &args.bin_file,

@@ -5,7 +5,7 @@
 
 mod helpers;
 
-use desperado::{IqFormat, IqSource};
+use dsp_radio::{IqFormat, IqSource};
 use std::fs;
 
 #[test]

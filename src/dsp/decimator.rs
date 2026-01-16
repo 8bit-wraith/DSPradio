@@ -9,8 +9,8 @@
 /// # Example
 ///
 /// ```rust
-/// use desperado::dsp::decimator::Decimator;
-/// use desperado::dsp::DspBlock;
+/// use dsp_radio::dsp::decimator::Decimator;
+/// use dsp_radio::dsp::DspBlock;
 /// use num_complex::Complex;
 ///
 /// // Decimate by a factor of 8
@@ -55,7 +55,7 @@ impl Decimator {
     ///
     /// # Example
     /// ```rust
-    /// use desperado::dsp::decimator::Decimator;
+    /// use dsp_radio::dsp::decimator::Decimator;
     ///
     /// let decimator = Decimator::new(4);
     /// ```
@@ -106,7 +106,7 @@ impl Decimator {
     ///
     /// # Example
     /// ```rust
-    /// use desperado::dsp::decimator::Decimator;
+    /// use dsp_radio::dsp::decimator::Decimator;
     ///
     /// // Custom decimator with 63 taps and lower cutoff
     /// let decimator = Decimator::with_params(8, 63, 0.05);

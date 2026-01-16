@@ -6,10 +6,10 @@
 
 _A unified Rust library for reading I/Q samples from files, SDR devices, and streams_
 
-[![Crates.io](https://img.shields.io/crates/v/desperado.svg)](https://crates.io/crates/desperado)
-[![Documentation](https://docs.rs/desperado/badge.svg)](https://docs.rs/desperado)
+[![Crates.io](https://img.shields.io/crates/v/DSPradio.svg)](https://crates.io/crates/DSPradio)
+[![Documentation](https://docs.rs/DSPradio/badge.svg)](https://docs.rs/DSPradio)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![CI](https://github.com/xoolive/desperado/workflows/Rust/badge.svg)](https://github.com/xoolive/desperado/actions)
+[![CI](https://github.com/8bit-wraith/DSPradio/workflows/Rust/badge.svg)](https://github.com/8bit-wraith/DSPradio/actions)
 
 Desperado is a library designed to factorize and reuse code for reading I/Q samples from files, SDR devices, and other sources.
 
@@ -36,7 +36,7 @@ Add Desperado to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-desperado = "0.1"
+DSPradio = "0.1"
 ```
 
 ### With SDR device support
@@ -45,11 +45,11 @@ To use hardware SDR devices, enable the appropriate feature flags:
 
 ```toml
 [dependencies]
-desperado = { version = "0.1", features = ["rtlsdr"] }  # For RTL-SDR devices
+DSPradio = { version = "0.1", features = ["rtlsdr"] }  # For RTL-SDR devices
 # or
-desperado = { version = "0.1", features = ["soapy"] }   # For SoapySDR-compatible devices
+DSPradio = { version = "0.1", features = ["soapy"] }   # For SoapySDR-compatible devices
 # or
-desperado = { version = "0.1", features = ["pluto"] }   # For Adalm-Pluto devices
+DSPradio = { version = "0.1", features = ["pluto"] }   # For Adalm-Pluto devices
 ```
 
 ### Available features
@@ -64,21 +64,15 @@ The following features are only needed for examples:
 - **`waterfall`**: Waterfall plot visualization example
 - **`audio`**: FM demodulation examples with audio output
 
-## Projects using desperado
-
-- **[jet1090](https://github.com/xoolive/jet1090)** - Real-time ADS-B decoder for tracking aircraft
-- **[ship162](https://github.com/xoolive/ship162)** - AIS decoder for tracking maritime vessels
-
-If you're using Desperado in your project, feel free to open a PR to add it here!
 
 ## Usage
 
 ### Basic example (synchronous version)
 
 ```rust ignore
-use desperado::{IqFormat, IqSource};
+use dsp_radio::{IqFormat, IqSource};
 
-fn main() -> desperado::Result<()> {
+fn main() -> dsp_radio::Result<()> {
     // Create an IQ source from a binary file
     let path = "sample.iq";
     let sample_rate = 96_000;
@@ -100,11 +94,11 @@ fn main() -> desperado::Result<()> {
 Access to RTL-SDR devices is provided with the `rtlsdr` feature enabled.
 
 ```rust ignore
-use desperado::IqAsyncSource;
+use dsp_radio::IqAsyncSource;
 use futures::StreamExt;
 
 #[tokio::main]
-async fn main() -> desperado::Result<()> {
+async fn main() -> dsp_radio::Result<()> {
     let device_index = 0;
     let sample_rate = 2_400_000;
     let center_freq = 1_090_000_000;

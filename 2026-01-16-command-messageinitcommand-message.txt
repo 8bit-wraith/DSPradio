@@ -1,0 +1,1042 @@
+                                                                                
+╭─── Claude Code v2.1.9 ───────────────────────────────────────────────────────╮
+│                                                    │ Tips for getting        │
+│               Welcome back Dratopher!              │ started                 │
+│                                                    │ ✔ Run /init to create … │
+│                       ▐▛███▜▌                      │ ─────────────────────── │
+│                      ▝▜█████▛▘                     │ Recent activity         │
+│                        ▘▘ ▝▝                       │ No recent activity      │
+│                                                    │                         │
+│     claude-opus-4-5 · Claude Max · ca@8b.is's      │                         │
+│     Organization                                   │                         │
+│                  /aidata/DSPradio                  │                         │
+╰──────────────────────────────────────────────────────────────────────────────╯
+                                                                                
+❯ /init                                                                         
+                                                                                
+● I'll analyze this codebase to create a comprehensive CLAUDE.md file. Let me   
+  start by exploring the project structure and understanding the architecture.  
+                                                                                
+● smart-tree - overview (MCP)(mode: "project", path: ".")                       
+  ⎿  PROJECT OVERVIEW                                                           
+                                                                                
+     GIT CONTEXT:                                                               
+     … +69 lines (ctrl+o to expand)                                             
+                                                                                
+● Read(readme.md)                                                               
+  ⎿  Read 317 lines                                                             
+                                                                                
+● Read(Cargo.toml)                                                              
+  ⎿  Read 65 lines                                                              
+                                                                                
+● Now let me explore the source code structure to understand the architecture.  
+                                                                                
+● Read(src/lib.rs)                                                              
+  ⎿  Read 958 lines                                                             
+                                                                                
+● Search(pattern: "src/**/*.rs", path: "/aidata/DSPradio")                      
+  ⎿  Found 15 files (ctrl+o to expand)                                          
+                                                                                
+● Search(pattern: "tests/**/*.rs", path: "/aidata/DSPradio")                    
+  ⎿  Found 3 files (ctrl+o to expand)                                           
+                                                                                
+● Now let me look at the DSP module structure and a few key files to understand 
+  the architecture better.                                                      
+                                                                                
+● Read(src/dsp/mod.rs)                                                          
+  ⎿  Read 150 lines                                                             
+                                                                                
+● Read(src/error.rs)                                                            
+  ⎿  Read 174 lines                                                             
+                                                                                
+● Search(pattern: "examples/*.rs", path: "/aidata/DSPradio")                    
+  ⎿  Found 4 files (ctrl+o to expand)                                           
+                                                                                
+● Now I have a good understanding of the codebase. Let me create the CLAUDE.md  
+  file.                                                                         
+                                                                                
+● Write(CLAUDE.md)                                                              
+  ⎿  Wrote 105 lines to CLAUDE.md                                               
+     # CLAUDE.md                                                                
+     This file provides guidance to Claude Code (claude.ai/code) when           
+     working with code in this repository.                                      
+     ## Project Overview                                                        
+     **Desperado** (`dsp_radio` crate) is a Rust library for reading I/Q        
+     samples from files, SDR devices, and streams. It provides a unified        
+     interface for both synchronous (`IqSource` + `Iterator`) and               
+     asynchronous (`IqAsyncSource` + `Stream`) I/Q data access, outputting      
+     normalized `Complex<f32>` values regardless of source format.              
+     ## Build & Development Commands                                            
+     … +95 lines (ctrl+o to expand)                                             
+                                                                                
+● ★ Insight ─────────────────────────────────────                               
+  The CLAUDE.md captures the dual sync/async architecture that's central to this
+   SDR library. The IqSource enum pattern allows unified handling of disparate  
+  I/Q sources (files, TCP, various SDR hardware) through Rust's enum dispatch,  
+  while the DspBlock trait enables composable signal processing pipelines. The  
+  URL-style device configuration (rtlsdr://0?freq=1090M) is a nice ergonomic    
+  touch for CLI applications.                                                   
+  ─────────────────────────────────────────────────                             
+                                                                                
+  I've created a comprehensive CLAUDE.md file for the DSPradio/Desperado        
+  project. The file includes:                                                   
+                                                                                
+  1. Build commands - Standard cargo commands for building with different       
+  feature flags, testing, linting, and running examples                         
+  2. Architecture overview covering:                                            
+    - Core types (IqSource, IqAsyncSource, IqFormat, DeviceConfig)              
+    - Source modules and their feature flags                                    
+    - DSP module structure with the DspBlock trait                              
+    - Naming conventions (sync vs async types)                                  
+  3. I/Q format reference table - Quick reference for understanding the         
+  different sample formats                                                      
+  4. Device URL syntax - The URL-style device configuration with SI suffix      
+  support                                                                       
+  5. Test location - Where tests live and how to run them                       
+                                                                                
+  The file avoids generic advice and focuses on what's specific to this codebase
+   - the unified I/Q source abstraction, the DSP pipeline architecture, and the 
+  feature-gated SDR device support.                                             
+                                                                                
+✻ Crunched for 48s                                                              
+                                                                                
+❯ Can we add an additional bind point for something that uses rtl_tcp?          
+  And if our system is using it, it gives our system priority if active on      
+  the desired hardware.   It tries to use put the same hardware in the same     
+  spots no matter if it was put into another usb.  Technically, we should       
+  be able to move it to anoither computer on the network.   Using MDNS          
+  advertising (at a normal rate.. no blast.   Devices could move                
+  seamlessly.  Some devices can be overriden by a more important                
+  situation.. Such as someone hacking my bluetooth lock.  The LLM's that        
+  are calling this can take care of that issue.. You are always welcome to      
+  throw a pi together with as many SDR's will fit with bandwidth                
+  capabilities in mind.   .  Thoughts? .                                        
+  ⎿  ⧉ Selected 1 lines from examples/file_stream.rs in Visual Studio Code      
+                                                                                
+● This is a fascinating architecture you're describing - essentially a          
+  distributed SDR resource broker with priority preemption. Let me break down my
+   thoughts:                                                                    
+                                                                                
+  Current State vs. Vision                                                      
+                                                                                
+  What exists:                                                                  
+  - TCP source in iqread.rs (raw I/Q over TCP, no control protocol)             
+  - Direct device access (rtlsdr, soapy, pluto)                                 
+                                                                                
+  What you're describing:                                                       
+  ┌─────────────────────────────────────────────────────────────────┐           
+  │                    SDR Resource Mesh                            │           
+  ├─────────────────────────────────────────────────────────────────┤           
+  │                                                                 │           
+  │   ┌──────────┐    mDNS: _dspradio._tcp     ┌──────────┐        │            
+  │   │ Pi + 4x  │◄────────────────────────────►│ Desktop  │        │           
+  │   │ RTL-SDR  │     "I have RTL#A3B2C1"     │ + HackRF │        │            
+  │   └────┬─────┘                              └────┬─────┘        │           
+  │        │                                         │              │           
+  │        ▼                                         ▼              │           
+  │   ┌─────────────────────────────────────────────────────────┐  │            
+  │   │              Device Registry / Broker                    │  │           
+  │   │  • Device identity by serial (stable across USB ports)  │  │            
+  │   │  • Priority levels (security > research > background)   │  │            
+  │   │  • Lease management with preemption                     │  │            
+  │   │  • Capability matching (freq range, bandwidth)          │  │            
+  │   └─────────────────────────────────────────────────────────┘  │            
+  │                              │                                  │           
+  │              ┌───────────────┼───────────────┐                  │           
+  │              ▼               ▼               ▼                  │           
+  │        ┌──────────┐   ┌──────────┐   ┌──────────┐              │            
+  │        │ LLM/Aye  │   │ Spectrum │   │ Security │              │            
+  │        │ Research │   │ Monitor  │   │ Scanner  │              │            
+  │        │ Priority:2│  │Priority:1│   │Priority:9│ ◄── PREEMPTS │            
+  │        └──────────┘   └──────────┘   └──────────┘              │            
+  └─────────────────────────────────────────────────────────────────┘           
+                                                                                
+  Key Components Needed                                                         
+  Component: rtl_tcp client                                                     
+  Purpose: Connect to existing rtl_tcp servers                                  
+  Rust Crates: (protocol impl)                                                  
+  ────────────────────────────────────────                                      
+  Component: rtl_tcp server                                                     
+  Purpose: Expose local devices over network                                    
+  Rust Crates: tokio, rtl-sdr-rs                                                
+  ────────────────────────────────────────                                      
+  Component: mDNS advertiser                                                    
+  Purpose: Announce available devices                                           
+  Rust Crates: mdns-sd or zeroconf                                              
+  ────────────────────────────────────────                                      
+  Component: Device registry                                                    
+  Purpose: Track devices by serial, manage leases                               
+  Rust Crates: Custom + persistence                                             
+  ────────────────────────────────────────                                      
+  Component: Priority arbiter                                                   
+  Purpose: Preemption logic, graceful handoff                                   
+  Rust Crates: Custom                                                           
+  Questions Before Diving In                                                    
+                                                                                
+● User answered Claude's questions:                                             
+  ⎿  · Should the broker be a separate daemon, or integrated into dsp_radio     
+     as an optional feature? → Separate daemon (Recommended)                    
+                                                                                
+     · What priority levels do you envision? → Simple                           
+     (low/normal/high/critical)                                                 
+     · How should preemption work when a higher priority client needs a         
+     device? → Graceful handoff                                                 
+                                                                                
+● Excellent choices. Separate daemon keeps the library clean, 4-level priority  
+  is easy to reason about, and graceful handoff respects ongoing work.          
+                                                                                
+  This is a significant architecture addition. Let me enter plan mode to design 
+  this properly.                                                                
+                                                                                
+● Entered plan mode                                                             
+  Claude is now exploring and designing an implementation approach.             
+                                                                                
+● Let me explore the existing codebase to understand the patterns we'll build   
+  on.                                                                           
+                                                                                
+● 2 Explore agents finished (ctrl+o to expand)                                  
+   ├─ Explore TCP and async patterns · 8 tool uses · 54.3k tokens               
+   │  ⎿  Done                                                                   
+   └─ Explore device config patterns · 15 tool uses · 70.8k tokens              
+      ⎿  Done                                                                   
+                                                                                
+● Excellent exploration results. Now let me launch a Plan agent to design the   
+  architecture.                                                                 
+                                                                                
+● Plan(Design SDR broker architecture)                                          
+  ⎿  Done (14 tool uses · 86.2k tokens · 5m 2s)                                 
+                                                                                
+● Excellent detailed architecture from the Plan agent. Let me write this up as a
+   concise plan file.                                                           
+                                                                                
+● Updated plan                                                                  
+  ⎿  Wrote 171 lines to                                                         
+     ../../home/hue/.claude/plans/eventual-sauteeing-church.md                  
+     # Distributed SDR Resource Broker for DSPradio                             
+     ## Summary                                                                 
+     Add rtl_tcp client support and a distributed SDR broker daemon with        
+     mDNS discovery, priority-based preemption, and graceful handoff.           
+     ## Architecture Overview                                                   
+     ```                                                                        
+     ┌─────────────────┐      mDNS: _dspradio._tcp      ┌─────────────────┐     
+     │  Pi + RTL-SDRs  │◄──────────────────────────────►│  Desktop + SDR  │     
+     … +161 lines (ctrl+o to expand)                                            
+                                                                                
+● I've created a comprehensive plan. Let me exit plan mode to get your approval.
+                                                                                
+● User approved Claude's plan                                                   
+  ⎿  Plan saved to: ~/.claude/plans/eventual-sauteeing-church.md · /plan to     
+     edit                                                                       
+                                                                                
+     Distributed SDR Resource Broker for DSPradio                               
+                                                                                
+     Summary                                                                    
+                                                                                
+     Add rtl_tcp client support and a distributed SDR broker daemon with        
+     mDNS discovery, priority-based preemption, and graceful handoff.           
+                                                                                
+     Architecture Overview                                                      
+                                                                                
+     ┌─────────────────┐      mDNS: _dspradio._tcp      ┌─────────────────┐     
+     │  Pi + RTL-SDRs  │◄──────────────────────────────►│  Desktop + SDR  │     
+     │  (Host Agent)   │                                 │  (Host Agent)   │    
+     └────────┬────────┘                                 └────────┬────────┘    
+              │ Register devices                                  │             
+              ▼                                                   ▼             
+     ┌─────────────────────────────────────────────────────────────────────┐    
+     │                     Broker Daemon (port 8420)                       │    
+     │  • Device Registry (by serial number)                               │    
+     │  • Lease Manager (priority: low/normal/high/critical)               │    
+     │  • Preemption with graceful handoff (N sec checkpoint window)       │    
+     │  • WebSocket I/Q streaming                                          │    
+     └─────────────────────────────────────────────────────────────────────┘    
+              ▲                           ▲                           ▲         
+              │                           │                           │         
+     ┌────────┴────────┐        ┌────────┴────────┐                             
+     ┌────────┴────────┐                                                        
+     │  LLM/Research   │        │  Spectrum Mon   │        │  Security Scan     
+      │                                                                         
+     │  Priority: low  │        │ Priority: normal│        │ Priority: crit     
+      │                                                                         
+     └─────────────────┘        └─────────────────┘                             
+     └─────────────────┘                                                        
+                                                                                
+     Crate Structure (Workspace)                                                
+                                                                                
+     /aidata/DSPradio/                                                          
+     ├── Cargo.toml                    # Workspace root (MODIFY)                
+     ├── dsp-radio/                    # Core library (move current src/)       
+     │   ├── src/                                                               
+     │   │   ├── rtl_tcp.rs           # NEW: rtl_tcp protocol client            
+     │   │   ├── broker_client.rs     # NEW: Client API for broker              
+     │   │   └── ... (existing modules)                                         
+     ├── dsp-radio-protocol/           # NEW: Shared types                      
+     │   └── src/                                                               
+     │       ├── lib.rs                                                         
+     │       ├── discovery.rs         # mDNS service layer                      
+     │       ├── priority.rs          # Priority enum                           
+     │       └── messages.rs          # API request/response types              
+     └── dsp-radio-broker/             # NEW: Broker daemon                     
+         └── src/                                                               
+             ├── main.rs                                                        
+             ├── broker.rs            # Core logic                              
+             ├── device_registry.rs   # Device tracking by serial               
+             ├── lease.rs             # Lease lifecycle                         
+             ├── preemption.rs        # Priority preemption                     
+             └── api/                 # REST + WebSocket                        
+                                                                                
+     Implementation Phases                                                      
+                                                                                
+     Phase 1: rtl_tcp Client Module                                             
+                                                                                
+     Files: dsp-radio/src/rtl_tcp.rs, dsp-radio/src/lib.rs                      
+                                                                                
+     - RtlTcpConfig struct (host, port, freq, rate, gain)                       
+     - Protocol: handshake (12 bytes: magic + tuner_type + gain_count)          
+     - Commands: 5-byte packets for SET_FREQ, SET_RATE, SET_GAIN, etc.          
+     - RtlTcpReader (sync) and AsyncRtlTcpReader (thread+channel pattern)       
+     - URL parsing: rtl_tcp://host:1234?freq=1090M&rate=2.4M&gain=auto          
+     - Add RtlTcp variant to DeviceConfig enum                                  
+                                                                                
+     Phase 2: Protocol Crate                                                    
+                                                                                
+     Files: dsp-radio-protocol/src/*                                            
+                                                                                
+     - DeviceSerial(String) - stable device identity                            
+     - Priority { Low, Normal, High, Critical } with handoff timeouts           
+     - LeaseId, ClientId (UUIDs)                                                
+     - REST API types: LeaseRequest, LeaseResponse, DeviceInfo                  
+     - WebSocket message types: PreemptWarning, DeviceCommand                   
+     - mDNS discovery: _dspradio._tcp.local. with TXT records                   
+                                                                                
+     Phase 3: Broker Daemon Core                                                
+                                                                                
+     Files: dsp-radio-broker/src/broker.rs, device_registry.rs, lease.rs,       
+     preemption.rs                                                              
+                                                                                
+     - DeviceRegistry: HashMap by serial, tracks status/capabilities/host       
+     - LeaseManager: Active leases, by-device and by-client indexes             
+     - Preemption logic: priority comparison → handoff timeout →                
+     revoke/grant                                                               
+     - Device status state machine: Available → InUse → Preempting →            
+     Released                                                                   
+                                                                                
+     Phase 4: Broker API Layer                                                  
+                                                                                
+     Files: dsp-radio-broker/src/api/*, main.rs                                 
+                                                                                
+     REST endpoints (port 8420):                                                
+     - POST /api/v1/devices - Register device (from host agent)                 
+     - GET /api/v1/devices - List devices                                       
+     - POST /api/v1/leases - Request lease                                      
+     - DELETE /api/v1/leases/{id} - Release lease                               
+     - POST /api/v1/leases/{id}/checkpoint - Ack checkpoint                     
+                                                                                
+     WebSocket: /api/v1/stream/{lease_id}                                       
+     - Binary frames: Raw Cu8 I/Q data                                          
+     - Text frames: JSON control messages (preempt_warning, set_freq, etc.)     
+                                                                                
+     Phase 5: Client Library                                                    
+                                                                                
+     Files: dsp-radio/src/broker_client.rs                                      
+                                                                                
+     let client = BrokerClient::connect(None).await?;  // Auto-discover via     
+     mDNS                                                                       
+     let lease = client.acquire("serial", Priority::Normal, config,             
+     callback).await?;                                                          
+                                                                                
+     while let Some(samples) = lease.next().await {                             
+         if let Some(warning) = lease.check_preempt() {                         
+             // Save state, acknowledge checkpoint                              
+             lease.checkpoint_complete().await?;                                
+             break;                                                             
+         }                                                                      
+         process(&samples?);                                                    
+     }                                                                          
+                                                                                
+     Phase 6: Host Agent                                                        
+                                                                                
+     Files: dsp-radio-broker/src/host_agent.rs                                  
+                                                                                
+     - Scan local USB for SDR devices (get serial numbers)                      
+     - Register with broker, advertise via mDNS                                 
+     - Manage rtl_tcp server processes per device                               
+     - Handle USB hotplug events (device migration)                             
+                                                                                
+     Key Dependencies                                                           
+                                                                                
+     # dsp-radio (new features)                                                 
+     mdns-sd = "0.11"                                                           
+     uuid = { version = "1.0", features = ["v4", "serde"] }                     
+     tokio-tungstenite = "0.24"                                                 
+     reqwest = { version = "0.12", features = ["json"] }                        
+                                                                                
+     # dsp-radio-broker                                                         
+     axum = { version = "0.8", features = ["ws"] }                              
+     tower-http = "0.6"                                                         
+     tracing = "0.1"                                                            
+                                                                                
+     Verification Plan                                                          
+                                                                                
+     1. rtl_tcp client: Connect to real rtl_tcp server, verify handshake and    
+      I/Q streaming                                                             
+     2. Protocol crate: Unit tests for serialization, mDNS discovery in         
+     local network                                                              
+     3. Broker daemon:                                                          
+       - Start broker, register mock devices                                    
+       - Request lease, verify I/Q flow                                         
+       - Test preemption: low-priority client displaced by high-priority        
+       - Verify graceful handoff: checkpoint callback received, timeout         
+     respected                                                                  
+     4. Client library: Integration test against running broker                 
+     5. Device migration: Unplug device from host A, plug into host B,          
+     verify seamless reconnection                                               
+                                                                                
+     Handoff Sequence (Critical Path)                                           
+                                                                                
+     T+0ms    Client B requests device (Priority: High)                         
+              Current: Client A (Priority: Normal)                              
+                                                                                
+     T+0ms    Broker sends preempt_warning to Client A                          
+              {"type": "preempt_warning", "deadline_ms": 5000}                  
+                                                                                
+     T+2500ms Client A acknowledges checkpoint                                  
+              POST /api/v1/leases/{id}/checkpoint                               
+                                                                                
+     T+2500ms Broker revokes A, grants to B                                     
+              Client B starts receiving I/Q                                     
+                                                                                
+     -- OR if no acknowledgment --                                              
+                                                                                
+     T+5000ms Deadline: Broker force-revokes A, grants to B                     
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+● Plan approved. Let me set up the todo list and begin implementation with Phase
+   1: the rtl_tcp client module.                                                
+                                                                                
+● Write(src/rtl_tcp.rs)                                                         
+  ⎿  Wrote 594 lines to src/rtl_tcp.rs                                          
+     //! rtl_tcp client module                                                  
+     //!                                                                        
+     //! This module provides client implementations for connecting to          
+     remote RTL-SDR                                                             
+     //! devices via the rtl_tcp protocol. rtl_tcp is a simple protocol         
+     that allows                                                                
+     //! streaming I/Q samples from an RTL-SDR device over TCP.                 
+     //!                                                                        
+     //! # Protocol Overview                                                    
+     //!                                                                        
+     //! The rtl_tcp protocol works as follows:                                 
+     //! 1. Client connects to server (default port 1234)                       
+     … +584 lines (ctrl+o to expand)                                            
+                                                                                
+❯ So, I would love if this runs as a service in the background and              
+  autoheals by removing and adding devices.   It can also with a watchdog       
+  try to reset and fix a device.                                                
+                                                                                
+● That's a great addition. I'll incorporate:                                    
+                                                                                
+  1. systemd service - Proper daemonization with socket activation              
+  2. USB hotplug via udev - Automatic device detection/removal                  
+  3. Device watchdog - Health checks, automatic reset attempts                  
+  4. Auto-heal - Remove stale devices, re-register recovered ones               
+                                                                                
+  Let me update the todo list to track this and continue with the current work. 
+  First, let me finish integrating the rtl_tcp module into the main library.    
+                                                                                
+❯ Maybe it should be able to write firmwarres too?                              
+                                                                                
+● Firmware management is a powerful addition. The broker could:                 
+                                                                                
+  - Track firmware versions per device serial                                   
+  - Flash firmware safely with pre/post validation                              
+  - EEPROM programming for RTL-SDR (set serial, vendor strings)                 
+  - DFU mode support for PlutoSDR, HackRF                                       
+  - Rollback on failed flash                                                    
+                                                                                
+  I'll add this as Phase 7 in the roadmap. For now, let me continue integrating 
+  rtl_tcp into the main library, then we'll build up to those advanced features.
+                                                                                
+● Read(src/lib.rs)                                                              
+  ⎿  Read 50 lines                                                              
+                                                                                
+● Read(src/lib.rs)                                                              
+  ⎿  Read 100 lines                                                             
+                                                                                
+● Read(src/lib.rs)                                                              
+  ⎿  Read 100 lines                                                             
+                                                                                
+● Read(src/lib.rs)                                                              
+  ⎿  Read 100 lines                                                             
+                                                                                
+● Read(src/lib.rs)                                                              
+  ⎿  Read 60 lines                                                              
+                                                                                
+● Now I'll integrate the rtl_tcp module into lib.rs. I'll make several edits to 
+  add the module, DeviceConfig variant, IqSource variants, and URL parsing.     
+                                                                                
+● Update(src/lib.rs)                                                            
+  ⎿  Added 1 line                                                               
+      24  pub mod rtlsdr;                                                       
+      25  #[cfg(feature = "soapy")]                                             
+      26  pub mod soapy;                                                        
+      27 +pub mod rtl_tcp;                                                      
+      28                                                                        
+      29  // Re-export commonly used types                                      
+      30  pub use error::{Error, Result};                                       
+                                                                                
+● Update(src/lib.rs)                                                            
+  ⎿  Added 2 lines                                                              
+      173      RtlSdr(rtlsdr::RtlSdrConfig),                                    
+      174      #[cfg(feature = "soapy")]                                        
+      175      Soapy(soapy::SoapyConfig),                                       
+      176 +    /// Remote RTL-SDR via rtl_tcp protocol                          
+      177 +    RtlTcp(rtl_tcp::RtlTcpConfig),                                   
+      178  }                                                                    
+      179                                                                       
+      180  impl std::str::FromStr for DeviceConfig {                            
+                                                                                
+● Update(src/lib.rs)                                                            
+  ⎿  Added 2 lines                                                              
+      481      /// SoapySDR-based IQ source (requires "soapy" feature)          
+      482      #[cfg(feature = "soapy")]                                        
+      483      SoapySdr(soapy::SoapySdrReader),                                 
+      484 +    /// Remote RTL-SDR via rtl_tcp protocol                          
+      485 +    RtlTcp(rtl_tcp::RtlTcpReader),                                   
+      486  }                                                                    
+      487                                                                       
+      488  impl Iterator for IqSource {                                         
+                                                                                
+● Update(src/lib.rs)                                                            
+  ⎿  Added 1 line                                                               
+      499              IqSource::RtlSdr(source) => source.next(),               
+      500              #[cfg(feature = "soapy")]                                
+      501              IqSource::SoapySdr(source) => source.next(),             
+      502 +            IqSource::RtlTcp(source) => source.next(),               
+      503          }                                                            
+      504      }                                                                
+      505  }                                                                    
+                                                                                
+● Update(src/lib.rs)                                                            
+  ⎿  Added 2 lines                                                              
+      685      /// SoapySDR-based IQ source (requires "soapy" feature)          
+      686      #[cfg(feature = "soapy")]                                        
+      687      SoapySdr(soapy::AsyncSoapySdrReader),                            
+      688 +    /// Remote RTL-SDR via rtl_tcp protocol                          
+      689 +    RtlTcp(rtl_tcp::AsyncRtlTcpReader),                              
+      690  }                                                                    
+      691                                                                       
+      692  impl IqAsyncSource {                                                 
+                                                                                
+● Update(src/lib.rs)                                                            
+  ⎿  Added 1 line                                                               
+      883              IqAsyncSource::RtlSdr(source) =>                         
+           Pin::new(source).poll_next(cx),                                      
+      884              #[cfg(feature = "soapy")]                                
+      885              IqAsyncSource::SoapySdr(source) =>                       
+           Pin::new(source).poll_next(cx),                                      
+      886 +            IqAsyncSource::RtlTcp(source) =>                         
+          +Pin::new(source).poll_next(cx),                                      
+      887          }                                                            
+      888      }                                                                
+      889  }                                                                    
+                                                                                
+● Now let me add the URL parsing for rtl_tcp://. First, let me find the exact   
+  location in the FromStr impl.                                                 
+                                                                                
+● Read(src/lib.rs)                                                              
+  ⎿  Read 25 lines                                                              
+                                                                                
+● Update(src/lib.rs)                                                            
+  ⎿  Added 79 lines                                                             
+      431                      gain,                                            
+      432                  }))                                                  
+      433              }                                                        
+      434 +            "rtl_tcp" | "rtltcp" => {                                
+      435 +                // Parse: rtl_tcp://host:port?freq=...&rate=.        
+          +..&gain=...&bias_tee=...&ppm=...                                     
+      436 +                let (host_part, query) = if let Some(q_pos) =        
+          + rest.find('?') {                                                    
+      437 +                    (&rest[..q_pos], &rest[q_pos + 1..])             
+      438 +                } else {                                             
+      439 +                    (rest, "")                                       
+      440 +                };                                                   
+      441 +                                                                     
+      442 +                // Parse host:port                                   
+      443 +                let (host, port) = if let Some(colon_pos) =          
+          +host_part.rfind(':') {                                               
+      444 +                    let host = &host_part[..colon_pos];              
+      445 +                    let port_str = &host_part[colon_pos +            
+          +1..];                                                                
+      446 +                    let port =                                       
+          +port_str.parse::<u16>().map_err(|_| {                                
+      447 +                        Error::other(format!("Invalid port:          
+          +{}", port_str))                                                      
+      448 +                    })?;                                             
+      449 +                    (host.to_string(), port)                         
+      450 +                } else {                                             
+      451 +                    (host_part.to_string(),                          
+          +rtl_tcp::protocol::DEFAULT_PORT)                                     
+      452 +                };                                                   
+      453 +                                                                     
+      454 +                // Parse query parameters                            
+      455 +                let mut center_freq: Option<u32> = None;             
+      456 +                let mut sample_rate: Option<u32> = None;             
+      457 +                let mut gain = Gain::Auto;                           
+      458 +                let mut bias_tee = false;                            
+      459 +                let mut ppm_correction: i32 = 0;                     
+      460 +                                                                     
+      461 +                for param in query.split('&') {                      
+      462 +                    if param.is_empty() {                            
+      463 +                        continue;                                    
+      464 +                    }                                                
+      465 +                    let kv: Vec<&str> = param.splitn(2,              
+          +'=').collect();                                                      
+      466 +                    if kv.len() != 2 {                               
+      467 +                        continue;                                    
+      468 +                    }                                                
+      469 +                    match kv[0] {                                    
+      470 +                        "freq" | "frequency" => {                    
+      471 +                            center_freq =                            
+          +Some(parse_si_value(kv[1])?);                                        
+      472 +                        }                                            
+      473 +                        "rate" | "sample_rate" => {                  
+      474 +                            sample_rate =                            
+          +Some(parse_si_value(kv[1])?);                                        
+      475 +                        }                                            
+      476 +                        "gain" => {                                  
+      477 +                            if kv[1].to_lowercase() == "auto"        
+          + {                                                                   
+      478 +                                gain = Gain::Auto;                   
+      479 +                            } else {                                 
+      480 +                                let gain_db: f64 =                   
+          +kv[1].parse().map_err(|_| {                                          
+      481 +                                                                     
+          +Error::other(format!("Invalid gain: {}", kv[1]))                     
+      482 +                                })?;                                 
+      483 +                                gain = Gain::Manual(gain_db);        
+      484 +                            }                                        
+      485 +                        }                                            
+      486 +                        "bias_tee" | "bias-tee" => {                 
+      487 +                            bias_tee = kv[1].to_lowercase()          
+          +== "true" || kv[1] == "1";                                           
+      488 +                        }                                            
+      489 +                        "ppm" | "ppm_correction" => {                
+      490 +                            ppm_correction =                         
+          +kv[1].parse().map_err(|_| {                                          
+      491 +                                Error::other(format!("Invalid        
+          + ppm: {}", kv[1]))                                                   
+      492 +                            })?;                                     
+      493 +                        }                                            
+      494 +                        _ => {} // Ignore unknown parameters         
+      495 +                    }                                                
+      496 +                }                                                    
+      497 +                                                                     
+      498 +                let center_freq = center_freq                        
+      499 +                    .ok_or_else(|| Error::other("Missing freq        
+          + parameter".to_string()))?;                                          
+      500 +                let sample_rate = sample_rate                        
+      501 +                    .ok_or_else(|| Error::other("Missing rate        
+          + parameter".to_string()))?;                                          
+      502 +                                                                     
+      503 +                Ok(DeviceConfig::RtlTcp(rtl_tcp::RtlTcpConfig        
+          + {                                                                   
+      504 +                    host,                                            
+      505 +                    port,                                            
+      506 +                    center_freq,                                     
+      507 +                    sample_rate,                                     
+      508 +                    gain,                                            
+      509 +                    bias_tee,                                        
+      510 +                    ppm_correction,                                  
+      511 +                }))                                                  
+      512 +            }                                                        
+      513              _ => Err(Error::other(format!("Unknown device            
+           scheme: {}", scheme))),                                              
+      514          }                                                            
+      515      }                                                                
+                                                                                
+● Now let me add the constructor methods. First, let me find the IqSource impl  
+  section.                                                                      
+                                                                                
+● Read(src/lib.rs)                                                              
+  ⎿  Read 80 lines                                                              
+                                                                                
+● Update(src/lib.rs)                                                            
+  ⎿  Added 42 lines                                                             
+      673                  let source =                                         
+           soapy::SoapySdrReader::new(&cfg)?;                                   
+      674                  Ok(IqSource::SoapySdr(source))                       
+      675              }                                                        
+      676 +            DeviceConfig::RtlTcp(cfg) => {                           
+      677 +                let source =                                         
+          +rtl_tcp::RtlTcpReader::new(&cfg)?;                                   
+      678 +                Ok(IqSource::RtlTcp(source))                         
+      679 +            }                                                        
+      680          }                                                            
+      681      }                                                                
+      682                                                                       
+      683 +    /// Create a new rtl_tcp-based I/Q source                        
+      684 +    ///                                                              
+      685 +    /// Connects to a remote RTL-SDR via the rtl_tcp                 
+          +protocol.                                                            
+      686 +    ///                                                              
+      687 +    /// # Example                                                    
+      688 +    ///                                                              
+      689 +    /// ```no_run                                                    
+      690 +    /// use dsp_radio::{IqSource, Gain};                             
+      691 +    ///                                                              
+      692 +    /// let source = IqSource::from_rtl_tcp(                         
+      693 +    ///     "192.168.1.100",                                         
+      694 +    ///     1234,                                                    
+      695 +    ///     1090_000_000,  // 1090 MHz                               
+      696 +    ///     2_400_000,     // 2.4 MS/s                               
+      697 +    ///     Gain::Auto,                                              
+      698 +    /// )?;                                                          
+      699 +    /// # Ok::<(), dsp_radio::Error>(())                             
+      700 +    /// ```                                                          
+      701 +    pub fn from_rtl_tcp(                                             
+      702 +        host: &str,                                                  
+      703 +        port: u16,                                                   
+      704 +        center_freq: u32,                                            
+      705 +        sample_rate: u32,                                            
+      706 +        gain: Gain,                                                  
+      707 +    ) -> error::Result<Self> {                                       
+      708 +        let config = rtl_tcp::RtlTcpConfig {                         
+      709 +            host: host.to_string(),                                  
+      710 +            port,                                                    
+      711 +            center_freq,                                             
+      712 +            sample_rate,                                             
+      713 +            gain,                                                    
+      714 +            bias_tee: false,                                         
+      715 +            ppm_correction: 0,                                       
+      716 +        };                                                           
+      717 +        let source = rtl_tcp::RtlTcpReader::new(&config)?;           
+      718 +        Ok(IqSource::RtlTcp(source))                                 
+      719 +    }                                                                
+      720 +                                                                     
+      721      #[cfg(feature = "pluto")]                                        
+      722      /// Create a new Adalm Pluto-based I/Q source                    
+      723      pub fn from_pluto(                                               
+                                                                                
+● Now let me add the async versions. Let me find the IqAsyncSource methods.     
+                                                                                
+● Read(src/lib.rs)                                                              
+  ⎿  Read 80 lines                                                              
+                                                                                
+● Update(src/lib.rs)                                                            
+  ⎿  Added 51 lines, removed 1 line                                             
+      968      ///                                                              
+      969      /// This is a convenience method that dispatches to the          
+           appropriate device-specific                                          
+      970      /// constructor based on the DeviceConfig variant.               
+      971 -    #[cfg(any(feature = "rtlsdr", feature = "pluto", feature         
+          -= "soapy"))]                                                         
+      971      pub async fn from_device_config(config: &DeviceConfig) ->        
+            error::Result<Self> {                                               
+      972          match config {                                               
+      973              #[cfg(feature = "rtlsdr")]                               
+     ...                                                                        
+       986                  let async_reader =                                  
+            soapy::AsyncSoapySdrReader::new(cfg)?;                              
+       987                  Ok(IqAsyncSource::SoapySdr(async_reader))           
+       988              }                                                       
+       989 +            DeviceConfig::RtlTcp(cfg) => {                          
+       990 +                let async_reader =                                  
+           +rtl_tcp::AsyncRtlTcpReader::new(cfg)?;                              
+       991 +                Ok(IqAsyncSource::RtlTcp(async_reader))             
+       992 +            }                                                       
+       993          }                                                           
+       994      }                                                               
+       995 +                                                                    
+       996 +    /// Create a new rtl_tcp-based asynchronous I/Q source          
+       997 +    ///                                                             
+       998 +    /// Connects to a remote RTL-SDR via the rtl_tcp                
+           +protocol.                                                           
+       999 +    ///                                                             
+      1000 +    /// # Example                                                   
+      1001 +    ///                                                             
+      1002 +    /// ```no_run                                                   
+      1003 +    /// use dsp_radio::{IqAsyncSource, Gain};                       
+      1004 +    /// use futures::StreamExt;                                     
+      1005 +    ///                                                             
+      1006 +    /// # #[tokio::main]                                            
+      1007 +    /// # async fn main() -> Result<(), dsp_radio::Error> {         
+      1008 +    /// let mut source = IqAsyncSource::from_rtl_tcp(               
+      1009 +    ///     "192.168.1.100",                                        
+      1010 +    ///     1234,                                                   
+      1011 +    ///     1090_000_000,  // 1090 MHz                              
+      1012 +    ///     2_400_000,     // 2.4 MS/s                              
+      1013 +    ///     Gain::Auto,                                             
+      1014 +    /// )?;                                                         
+      1015 +    ///                                                             
+      1016 +    /// while let Some(chunk) = source.next().await {               
+      1017 +    ///     let samples = chunk?;                                   
+      1018 +    ///     println!("Received {} samples", samples.len());         
+      1019 +    /// }                                                           
+      1020 +    /// # Ok(())                                                    
+      1021 +    /// # }                                                         
+      1022 +    /// ```                                                         
+      1023 +    pub fn from_rtl_tcp(                                            
+      1024 +        host: &str,                                                 
+      1025 +        port: u16,                                                  
+      1026 +        center_freq: u32,                                           
+      1027 +        sample_rate: u32,                                           
+      1028 +        gain: Gain,                                                 
+      1029 +    ) -> error::Result<Self> {                                      
+      1030 +        let config = rtl_tcp::RtlTcpConfig {                        
+      1031 +            host: host.to_string(),                                 
+      1032 +            port,                                                   
+      1033 +            center_freq,                                            
+      1034 +            sample_rate,                                            
+      1035 +            gain,                                                   
+      1036 +            bias_tee: false,                                        
+      1037 +            ppm_correction: 0,                                      
+      1038 +        };                                                          
+      1039 +        let async_reader =                                          
+           +rtl_tcp::AsyncRtlTcpReader::new(&config)?;                          
+      1040 +        Ok(IqAsyncSource::RtlTcp(async_reader))                     
+      1041 +    }                                                               
+      1042  }                                                                   
+      1043                                                                      
+      1044  impl Stream for IqAsyncSource {                                     
+                                                                                
+● Now let me update the doc comment for DeviceConfig to include the rtl_tcp URL 
+  format.                                                                       
+                                                                                
+● Update(src/lib.rs)                                                            
+  ⎿  Added 2 lines, removed 1 line                                              
+      184      ///                                                              
+      185      /// Supported formats:                                           
+      186      /// - `rtlsdr://[device_index]?freq=<hz>&rate=<hz>&gain=<        
+           db|auto>&bias_tee=<bool>`                                            
+      187 +    /// - `rtl_tcp://host[:port]?freq=<hz>&rate=<hz>&gain=<db        
+          +|auto>&ppm=<int>`                                                    
+      188      /// -                                                            
+           `soapy://<driver>?freq=<hz>&rate=<hz>&gain=<db|auto>`                
+      189 -    /// - `pluto://<uri>?freq=<hz>&gain=<db|auto>`                   
+      189 +    /// - `pluto://<uri>?freq=<hz>&gain=<hz>&gain=<db|auto>`         
+      190      /// - `plutoip://<ip>` (shorthand for `pluto://ip:<ip>`)         
+      191      /// - `plutousb://<usb>` (shorthand for                          
+           `pluto://usb:<usb>`)                                                 
+      192      ///                                                              
+                                                                                
+● Now let me try to build and check for any errors.                             
+                                                                                
+● Bash(cargo build 2>&1)                                                        
+  ⎿     Compiling libc v0.2.177                                                 
+        Compiling futures-sink v0.3.31                                          
+        Compiling futures-core v0.3.31                                          
+     … +28 lines (ctrl+o to expand)                                             
+                                                                                
+● Build successful. Let me run clippy and tests to ensure everything is clean.  
+                                                                                
+● Bash(cargo clippy 2>&1 | head -100)                                           
+  ⎿     Checking dsp_radio v0.1.2 (/aidata/DSPradio)                            
+        Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.27s     
+                                                                                
+                                                                                
+● Bash(cargo test 2>&1)                                                         
+  ⎿    Compiling approx v0.5.1                                                  
+       Compiling dsp_radio v0.1.2 (/aidata/DSPradio)                            
+        Finished `test` profile [unoptimized + debuginfo] target(s) in 0.44     
+    … +203 lines (ctrl+o to expand)                                             
+                                                                                
+                                                                                
+● All 84 tests pass and clippy is clean. Let me update the todo list and the    
+  CLAUDE.md file.                                                               
+                                                                                
+● Read(CLAUDE.md)                                                               
+  ⎿  Read 105 lines                                                             
+                                                                                
+● Update(CLAUDE.md)                                                             
+  ⎿  Added 1 line                                                               
+      51  | Module | Feature Flag | Purpose |                                   
+      52  |--------|--------------|---------|                                   
+      53  | `iqread` | (always) | File/stdin/TCP I/Q readers with format        
+           conversion |                                                         
+      54 +| `rtl_tcp` | (always) | Remote RTL-SDR via rtl_tcp protocol          
+         +(network streaming) |                                                 
+      55  | `rtlsdr` | `rtlsdr` | RTL-SDR device support via pure Rust          
+          `rtl-sdr-rs` |                                                        
+      56  | `soapy` | `soapy` | SoapySDR bindings (HackRF, LimeSDR,             
+          etc.) |                                                               
+      57  | `pluto` | `pluto` | Adalm-Pluto via libiio bindings |               
+                                                                                
+● Update(CLAUDE.md)                                                             
+  ⎿  Added 10 lines                                                             
+      89                                                                        
+      90  ```                                                                   
+      91  rtlsdr://[device_index]?freq=<hz>&rate=<hz>&gain=<db|auto>&bia        
+          s_tee=<bool>                                                          
+      92 +rtl_tcp://host[:port]?freq=<hz>&rate=<hz>&gain=<db|auto>&ppm=<        
+         +int>                                                                  
+      93  soapy://<driver>?freq=<hz>&rate=<hz>&gain=<db|auto>                   
+      94  pluto://<uri>?freq=<hz>&rate=<hz>&gain=<db|auto>                      
+      95  plutoip://<ip>?...    # shorthand for pluto://ip:<ip>                 
+     ...                                                                        
+       96                                                                       
+       97  SI suffixes supported: `k`, `M`, `G` (e.g., `freq=1090M`,            
+           `rate=2.4M`)                                                         
+       98                                                                       
+       99 +### rtl_tcp Example                                                  
+      100 +                                                                     
+      101 +Connect to a remote RTL-SDR running `rtl_tcp`:                       
+      102 +```rust                                                              
+      103 +// On remote host: rtl_tcp -a 0.0.0.0                                
+      104 +let config = "rtl_tcp://192.168.1.100:1234?freq=1090M&rate=2.        
+          +4M&gain=auto";                                                       
+      105 +let source = IqSource::from_device_config(config.parse()?)?;         
+      106 +```                                                                  
+      107 +                                                                     
+      108  ## Tests                                                             
+      109                                                                       
+      110  Integration tests in `tests/`:                                       
+                                                                                
+● ★ Insight ─────────────────────────────────────                               
+  Phase 1 Complete: rtl_tcp Client Module                                       
+                                                                                
+  The rtl_tcp implementation follows the existing async pattern in the codebase 
+  - using a background thread + mpsc channel to bridge blocking TCP I/O with the
+   async runtime. This is the same approach used by AsyncRtlSdrReader and works 
+  well because the rtl_tcp protocol is fundamentally blocking (continuous byte  
+  stream with no async-friendly framing).                                       
+                                                                                
+  Key design choices:                                                           
+  - No feature flag needed - rtl_tcp uses only std library networking           
+  - Command channel allows runtime frequency/gain changes without reconnecting  
+  - 100ms read timeout in the background thread enables responsive command      
+  handling                                                                      
+  ─────────────────────────────────────────────────                             
+                                                                                
+  Phase 1 Complete                                                              
+                                                                                
+  New files:                                                                    
+  - src/rtl_tcp.rs - Full rtl_tcp protocol implementation (400+ lines)          
+                                                                                
+  Modified files:                                                               
+  - src/lib.rs - Added RtlTcp variants to DeviceConfig, IqSource, IqAsyncSource 
+  - CLAUDE.md - Documented rtl_tcp support                                      
+                                                                                
+  What you can now do:                                                          
+  // Connect to remote rtl_tcp server                                           
+  let source = IqSource::from_rtl_tcp("192.168.1.100", 1234, 1090_000_000,      
+  2_400_000, Gain::Auto)?;                                                      
+                                                                                
+  // Or via URL parsing                                                         
+  let config: DeviceConfig =                                                    
+  "rtl_tcp://pi.local:1234?freq=1090M&rate=2.4M&gain=auto".parse()?;            
+  let source = IqSource::from_device_config(config)?;                           
+                                                                                
+  Next Steps: Broker Daemon                                                     
+                                                                                
+  Ready to start Phase 2-3 (the broker daemon with service features you         
+  mentioned):                                                                   
+                                                                                
+  1. Protocol crate - Shared types (Priority, LeaseId, DeviceSerial)            
+  2. Broker daemon with:                                                        
+    - REST API on port 8420                                                     
+    - WebSocket I/Q streaming                                                   
+    - systemd service integration                                               
+    - udev hotplug for auto device detection                                    
+    - Watchdog with health checks and device reset                              
+    - Auto-heal - remove stale devices, re-register recovered ones              
+  3. mDNS discovery - _dspradio._tcp.local.                                     
+                                                                                
+  Should I continue with creating the workspace structure and broker daemon, or 
+  would you like to test the rtl_tcp module first with a real rtl_tcp server?   
+                                                                                
+✻ Sautéed for 13m 2s                                                            
+                                                                                
+❯ /smart-tree:project_memory (MCP)                                              
+                                                                                
+● smart-tree - memory (MCP)(operation: "find", keywords: ["optimization","perfor
+                           mance","DSPradio","rtl_tcp","broker"])               
+                                                                                
+● No existing memories found. Let me anchor some insights from our current work 
+  for future sessions.                                                          
+                                                                                
+● smart-tree - memory (MCP)(operation: "anchor", anchor_type: "solution",       
+                           keywords: ["DSPradio","rtl_tcp","architecture","async
+                           ","optimization"], context: "DSPradio rtl_tcp        
+                           implementation: Uses thread+mpsc channel pattern for 
+                           async I/Q streaming (same as AsyncRtlSdrReader). Key 
+                           optimizations: 16KB buffer (8K samples), 100ms read  
+                           timeout for responsive command handling, Cu8 format  
+                           conversion reuses existing                           
+                           convert_bytes_to_complex(). No feature flag needed - 
+                           pure std networking. URL format:                     
+                           rtl_tcp://host:port?freq=1090M&rate=2.4M&gain=auto") 
+  ⎿  Error: MCP error -32603: missing field `origin`                            
+                                                                                
+● smart-tree - memory (MCP)(operation: "anchor", anchor_type: "pattern",        
+                           keywords:                                            
+                           ["broker","SDR","priority","preemption","mDNS"],     
+                           context: "SDR Broker Architecture Plan: Separate     
+                           daemon on port 8420, 4-level priority                
+                           (low/normal/high/critical), graceful handoff with    
+                           checkpoint callbacks, mDNS discovery via             
+                           _dspradio._tcp.local. Device identity by serial      
+                           number for USB port independence. Auto-heal via udev 
+                           hotplug monitoring. Watchdog for device health checks
+                            and reset capability.")                             
+  ⎿  Error: MCP error -32603: missing field `origin`                            
+                                                                                
+● smart-tree - memory (MCP)(operation: "anchor", anchor_type: "pattern",        
+                           keywords:                                            
+                           ["DSPradio","crate","workspace","structure"],        
+                           context: "DSPradio workspace structure: dsp-radio/   
+                           (core library with rtl_tcp), dsp-radio-protocol/     
+                           (shared types: Priority, LeaseId, DeviceSerial, mDNS 
+                           discovery), dsp-radio-broker/ (daemon with REST API, 
+                           WebSocket streaming, systemd service, udev hotplug). 
+                           Monorepo approach for atomic releases and shared     
+                           protocol types.")                                    
+  ⎿  Error: MCP error -32603: missing field `origin`                            
+                                                                                
+● The memory anchoring isn't working due to a missing field, but the key        
+  insights from our session are:                                                
+                                                                                
+  1. rtl_tcp implementation complete - thread+channel async pattern             
+  2. Broker architecture planned - port 8420, priority preemption, mDNS         
+  3. Workspace structure designed for modular development                       
+                                                                                
+  I should inform the user about this and continue with the work.               
+                                                                                
+                                                                                
+  The Smart Tree memory tool encountered an error (missing origin field).       
+  However, the key optimization insights from our session are:                  
+                                                                                
+  DSPradio Optimization Insights                                                
+                                                                                
+  rtl_tcp Performance:                                                          
+  - 16KB buffer (8K Cu8 samples per read)                                       
+  - Thread+channel async pattern avoids runtime blocking                        
+  - 100ms read timeout balances responsiveness vs CPU usage                     
+  - Reuses convert_bytes_to_complex() - no duplicate conversion code            
+                                                                                
+  Broker Architecture (Planned):                                                
+  - Port 8420 (per project conventions)                                         
+  - 4-level priority: low < normal < high < critical                            
+  - Handoff timeouts: critical=0ms, high=2s, normal=5s, low=10s                 
+  - mDNS discovery eliminates manual broker configuration                       
+  - udev hotplug for instant device detection (no polling)                      
+                                                                                
+  Workspace Structure:                                                          
+  dsp-radio/          # Core lib (no external deps for rtl_tcp)                 
+  dsp-radio-protocol/ # Shared types (avoids circular deps)                     
+  dsp-radio-broker/   # Daemon (axum, systemd, udev)                            
+                                                                                
+  Want me to continue building the broker daemon, or would you like to test the 
+  rtl_tcp module first?                                                         
+

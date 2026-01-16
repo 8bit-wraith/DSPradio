@@ -1,5 +1,5 @@
 use clap::Parser;
-use desperado::{IqFormat, IqSource};
+use dsp_radio::{IqFormat, IqSource};
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
@@ -21,7 +21,7 @@ struct Args {
     iq_format: IqFormat,
 }
 
-fn main() -> desperado::Result<()> {
+fn main() -> dsp_radio::Result<()> {
     let args = Args::parse();
     let iq_file = IqSource::from_file(
         &args.bin_file,

@@ -34,7 +34,7 @@
 //! ```
 
 use crossbeam::channel;
-use desperado::dsp::{
+use dsp_radio::dsp::{
     DspBlock,
     afc::SquareFreqOffsetCorrection,
     decimator::Decimator,
@@ -49,7 +49,7 @@ use std::io::{Write, stdout};
 use std::str::FromStr;
 
 use clap::{Parser, ValueEnum};
-use desperado::{IqAsyncSource, IqFormat};
+use dsp_radio::{IqAsyncSource, IqFormat};
 
 use rubato::{
     Resampler, SincFixedOut, SincInterpolationParameters, SincInterpolationType, WindowFunction,
@@ -131,7 +131,7 @@ const MONO_SIGNAL_BW: f32 = 15_000.0;
 const AUDIO_RATE: usize = 48_000;
 
 #[tokio::main]
-async fn main() -> desperado::Result<()> {
+async fn main() -> dsp_radio::Result<()> {
     let args = Args::parse();
 
     // Create IQ source based on selected type
@@ -286,7 +286,7 @@ async fn run_mono(
     afc: &mut SquareFreqOffsetCorrection,
     lowpass_fir: &LowPassFir,
     tx: channel::Sender<f32>,
-) -> desperado::Result<()> {
+) -> dsp_radio::Result<()> {
     let mut deemphasis = DeemphasisFilter::new(FM_BANDWIDTH, 50e-6);
     let mut audio_resample =
         AudioAdaptiveResampler::new(AUDIO_RATE as f64 / FM_BANDWIDTH as f64, 1, 1);
@@ -388,7 +388,7 @@ async fn run_stereo(
     afc: &mut SquareFreqOffsetCorrection,
     lowpass_fir: &LowPassFir,
     tx: channel::Sender<f32>,
-) -> desperado::Result<()> {
+) -> dsp_radio::Result<()> {
     let mut stereo = StereoDecoderPLL::new(FM_BANDWIDTH);
     let mut deemphasis_l = DeemphasisFilter::new(FM_BANDWIDTH, 50e-6);
     let mut deemphasis_r = DeemphasisFilter::new(FM_BANDWIDTH, 50e-6);

@@ -1,12 +1,12 @@
 [package]
-name = "desperado"
+name = "dsp_radio"
 version = "0.1.2"
 edition = "2024"
-authors = ["Xavier Olive <git@xoolive.org>"]
+authors = ["Christopher Chenoweth <git@8b.is>", "Aye <aye@8b.is>"]
 license = "MIT"
 description = "Iterate and stream I/Q samples from stdin, files, TCP streams and SDR devices"
-repository = "https://github.com/xoolive/desperado"
-documentation = "https://docs.rs/desperado"
+repository = "https://github.com/8bit-wraith/DSPradio"
+documentation = "https://docs.rs/DSPradio"
 readme = "readme.md"
 keywords = ["radio", "decoder", "sdr", "dsp"]
 

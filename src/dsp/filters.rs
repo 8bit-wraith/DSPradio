@@ -6,7 +6,7 @@
 //! # Example
 //!
 //! ```
-//! use desperado::dsp::filters::LowPassFir;
+//! use dsp_radio::dsp::filters::LowPassFir;
 //!
 //! // Create a low-pass filter with 15kHz cutoff at 240kHz sample rate
 //! let filter = LowPassFir::new(15_000.0, 240_000.0, 256);
@@ -39,7 +39,7 @@ use std::f32::consts::PI;
 /// # Example
 ///
 /// ```
-/// use desperado::dsp::filters::LowPassFir;
+/// use dsp_radio::dsp::filters::LowPassFir;
 ///
 /// // Create a filter to isolate mono audio (0-15kHz) from FM baseband
 /// let cutoff = 15_000.0;      // 15 kHz cutoff
@@ -77,7 +77,7 @@ impl LowPassFir {
     /// # Example
     ///
     /// ```
-    /// use desperado::dsp::filters::LowPassFir;
+    /// use dsp_radio::dsp::filters::LowPassFir;
     ///
     /// // Sharper filter (more taps)
     /// let sharp = LowPassFir::new(15_000.0, 240_000.0, 512);
@@ -136,7 +136,7 @@ impl LowPassFir {
     /// # Example
     ///
     /// ```
-    /// use desperado::dsp::filters::LowPassFir;
+    /// use dsp_radio::dsp::filters::LowPassFir;
     ///
     /// let filter = LowPassFir::new(15_000.0, 240_000.0, 256);
     /// let input = vec![1.0, 0.5, 0.0, -0.5, -1.0];
@@ -170,7 +170,7 @@ impl LowPassFir {
     /// # Example
     ///
     /// ```
-    /// use desperado::dsp::filters::LowPassFir;
+    /// use dsp_radio::dsp::filters::LowPassFir;
     ///
     /// let filter = LowPassFir::new(15_000.0, 240_000.0, 256);
     /// assert_eq!(filter.taps(), 256);
@@ -188,7 +188,7 @@ impl LowPassFir {
     /// # Example
     ///
     /// ```
-    /// use desperado::dsp::filters::LowPassFir;
+    /// use dsp_radio::dsp::filters::LowPassFir;
     ///
     /// let filter = LowPassFir::new(15_000.0, 240_000.0, 64);
     /// let coeffs = filter.coefficients();

@@ -1,15 +1,15 @@
-//! Error handling for the desperado library
+//! Error handling for the DSPradio library
 //!
-//! This module provides a unified error type for all operations in the desperado
+//! This module provides a unified error type for all operations in the DSPradio
 //! library, including I/O operations, device errors, and format conversions.
 
 use std::fmt;
 use std::io;
 
-/// A specialized Result type for desperado operations
+/// A specialized Result type for DSPradio operations
 pub type Result<T> = std::result::Result<T, Error>;
 
-/// Error type for desperado operations
+/// Error type for DSPradio operations
 #[derive(Debug)]
 pub enum Error {
     /// I/O error (file operations, network, etc.)

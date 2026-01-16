@@ -18,8 +18,8 @@
 /// # Example
 /// ```
 /// use num_complex::Complex;
-/// use desperado::dsp::rotate::Rotate;
-/// use desperado::dsp::DspBlock;
+/// use dsp_radio::dsp::rotate::Rotate;
+/// use dsp_radio::dsp::DspBlock;
 ///
 /// // Rotate by 0.1 radians per sample (frequency shift)
 /// let mut rotator = Rotate::new(0.1);
@@ -60,7 +60,7 @@ impl Rotate {
     /// # Example
     ///
     /// ```
-    /// use desperado::dsp::rotate::Rotate;
+    /// use dsp_radio::dsp::rotate::Rotate;
     /// use std::f32::consts::PI;
     ///
     /// // Shift by 200 kHz at 2 MHz sample rate
@@ -84,8 +84,8 @@ impl Rotate {
     /// # Example
     ///
     /// ```
-    /// use desperado::dsp::rotate::Rotate;
-    /// use desperado::dsp::DspBlock;
+    /// use dsp_radio::dsp::rotate::Rotate;
+    /// use dsp_radio::dsp::DspBlock;
     /// use num_complex::Complex;
     ///
     /// let mut rotator = Rotate::new(0.1);
@@ -118,8 +118,8 @@ impl DspBlock for Rotate {
     /// # Example
     ///
     /// ```
-    /// use desperado::dsp::rotate::Rotate;
-    /// use desperado::dsp::DspBlock;
+    /// use dsp_radio::dsp::rotate::Rotate;
+    /// use dsp_radio::dsp::DspBlock;
     /// use num_complex::Complex;
     ///
     /// let mut rotator = Rotate::new(0.5);

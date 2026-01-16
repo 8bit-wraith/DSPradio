@@ -1,5 +1,5 @@
 use clap::Parser;
-use desperado::{IqFormat, IqSource};
+use dsp_radio::{IqFormat, IqSource};
 use num_complex::Complex;
 use rustfft::FftPlanner;
 

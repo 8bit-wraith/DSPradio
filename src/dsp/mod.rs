@@ -52,7 +52,7 @@
 /// ## Basic FM Demodulation
 ///
 /// ```no_run
-/// use desperado::dsp::{
+/// use dsp_radio::dsp::{
 ///     DspBlock,
 ///     decimator::Decimator,
 ///     fm::{PhaseExtractor, DeemphasisFilter},
@@ -77,7 +77,7 @@
 /// ## Frequency Shifting
 ///
 /// ```
-/// use desperado::dsp::{DspBlock, rotate::Rotate};
+/// use dsp_radio::dsp::{DspBlock, rotate::Rotate};
 /// use num_complex::Complex;
 /// use std::f32::consts::PI;
 ///
@@ -123,7 +123,7 @@ pub mod rotate;
 /// # Examples
 ///
 /// ```
-/// use desperado::dsp::{DspBlock, rotate::Rotate};
+/// use dsp_radio::dsp::{DspBlock, rotate::Rotate};
 /// use num_complex::Complex;
 ///
 /// let mut rotator = Rotate::new(0.1);

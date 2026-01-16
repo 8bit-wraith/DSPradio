@@ -1,6 +1,6 @@
 //! Unit and integration tests for the iqread module
 
-use desperado::{IqFormat, IqSource};
+use dsp_radio::{IqFormat, IqSource};
 use std::fs;
 
 #[test]
@@ -94,14 +94,14 @@ fn test_expanduser_with_tilde() {
 
     // Create a test file in the actual home directory
     let home = dirs::home_dir().expect("Could not get home directory");
-    let test_file = home.join(".desperado_test.iq");
+    let test_file = home.join(".DSPradio_test.iq");
 
     // Write a small test file
     let samples = vec![127, 127, 128, 128]; // 2 Cu8 samples
     fs::write(&test_file, &samples).expect("Failed to write test file");
 
     // Try to open with tilde path
-    let tilde_path = "~/.desperado_test.iq";
+    let tilde_path = "~/.DSPradio_test.iq";
     let result = IqSource::from_file(tilde_path, 162_000_000, 96_000, 2, IqFormat::Cu8);
 
     // Should successfully open the file
@@ -147,7 +147,7 @@ fn test_expanduser_nonexistent_file() {
     assert!(result.is_err(), "Should return error for nonexistent file");
     let err = result.err().unwrap();
     // Check that it's an I/O error
-    assert!(matches!(err, desperado::Error::Io(_)));
+    assert!(matches!(err, dsp_radio::Error::Io(_)));
 }
 
 #[test]
