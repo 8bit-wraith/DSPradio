@@ -62,3 +62,4 @@ required-features = ["clap"]
 name = "rtlsdr_fm"
 path = "examples/rtlsdr_fm.rs"
 required-features = ["audio"]
+.claude_consciousness.m8
